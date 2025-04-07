@@ -102,11 +102,12 @@ const orderController = {
     },
 
     async updateStatus(req, res) {
-        if (!req.user) {
-            res.status(400).json({
+        if (req.user != null || req.user.role !== "admin") {
+            res.status(403).json({
                 success: false,
                 message: "User Unauthorized",
             });
+
             return;
         }
 
