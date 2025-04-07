@@ -371,7 +371,7 @@ Response (200 OK):
 |--------|----------|-------------|:-------------:|:----------:|
 | GET | `/order/admin/all` | Get all orders | Yes | Yes |
 | GET | `/order/` | Get user's orders | Yes | No |
-| PUT | `/order/update` | Update order status | Yes | No |
+| PUT | `/order/update` | Update order status | Yes | Yes |
 | POST | `/order/place` | Place a new order | Yes | No |
 
 #### GET `/order/admin/all` - Get all orders (Admin only)
