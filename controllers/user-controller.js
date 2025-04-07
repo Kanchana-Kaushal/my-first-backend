@@ -161,7 +161,7 @@ const userController = {
     },
 
     async banUser(req, res) {
-        if (req.user.role !== "admin") {
+        if (req.user != null || req.user.role !== "admin") {
             res.status(403).json({
                 success: false,
                 message: "User Unauthorized",
@@ -190,7 +190,7 @@ const userController = {
     },
 
     async getAll(req, res) {
-        if (req.user.role !== "admin") {
+        if (req.user != null || req.user.role !== "admin") {
             res.status(403).json({
                 success: false,
                 message: "User Unauthorized",

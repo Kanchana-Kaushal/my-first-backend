@@ -1,204 +1,106 @@
-# 🚀 My First Backend
+# 🚀 my-first-backend
 
-Welcome to **my-first-backend** - an Express.js powered API with authentication, product management, and order processing capabilities! This project is perfect for e-commerce applications, learning backend development, or just showing off your Node.js skills.
+A feature-rich backend API built with Node.js, Express, and MongoDB that handles user authentication, product management, and order processing.
+
+![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)
+![Express](https://img.shields.io/badge/Express-000000?style=for-the-badge&logo=express&logoColor=white)
+![MongoDB](https://img.shields.io/badge/MongoDB-4EA94B?style=for-the-badge&logo=mongodb&logoColor=white)
+![JWT](https://img.shields.io/badge/JWT-black?style=for-the-badge&logo=JSON%20web%20tokens)
+
+## ✨ Features
+
+-   👤 User authentication with JWT
+-   🔒 Password hashing with Argon2id
+-   🛍️ Product management
+-   🛒 Order processing
+-   👮 Admin and customer roles with different permissions
+-   🚫 User banning functionality
 
 ## 📋 Table of Contents
 
 -   [Getting Started](#getting-started)
--   [Environment Setup](#environment-setup)
+    -   [Prerequisites](#prerequisites)
+    -   [Installation](#installation)
+    -   [Environment Setup](#environment-setup)
+-   [API Documentation](#api-documentation)
+    -   [User Endpoints](#user-endpoints)
+    -   [Product Endpoints](#product-endpoints)
+    -   [Order Endpoints](#order-endpoints)
 -   [Authentication](#authentication)
--   [API Endpoints](#api-endpoints)
-    -   [User Routes](#user-routes)
-    -   [Product Routes](#product-routes)
-    -   [Order Routes](#order-routes)
--   [Data Models](#data-models)
 -   [Testing with Postman](#testing-with-postman)
--   [Common Errors & Solutions](#common-errors--solutions)
--   [Feature Expansion Ideas](#feature-expansion-ideas)
+-   [Data Models](#data-models)
 
 ## 🚀 Getting Started
 
-To get this project up and running on your local machine faster than you can say "Node.js is awesome":
+### Prerequisites
 
-```bash
-# Clone the repository
-git clone <repository-url>
+-   Node.js (v14 or higher)
+-   MongoDB (local or cloud instance)
+-   Postman (for testing the API)
 
-# Navigate to project directory
-cd my-first-backend
+### Installation
 
-# Install dependencies
-npm install
+1. Clone the repository:
 
-# Start the development server with nodemon
-npm run dev
+    ```bash
+    git clone https://github.com/yourusername/my-first-backend.git
+    cd my-first-backend
+    ```
+
+2. Install dependencies:
+
+    ```bash
+    npm install
+    ```
+
+3. Start the development server:
+    ```bash
+    npm run dev
+    ```
+
+### Environment Setup
+
+Create a `.env` file in the root directory with the following variables:
+
 ```
-
-Once running, your server will be available at `http://localhost:5000` - ready to receive requests and make API dreams come true!
-
-## 🔑 Environment Setup
-
-Before starting the application, create a `.env` file in the root directory with the following variables:
-
-```
-MONGO_DB_CONN_STRING={YOU MONGODB LOCAL OR ATLAS CONNECTION STRING}
+MONGO_DB_CONN_STRING=mongodb://localhost:27017/my-first-backend
 PEPPER=thisIsATestPepperSentence123
 JWT_SECRET_KEY=thisIsATestSecretKeyForJWT123
 ```
 
-These environment variables are essential for:
+## 📡 API Documentation
 
--   MongoDB database connection (where all your precious data lives)
--   Password hashing security with Argon2id (because nobody likes plain text passwords)
--   JWT token generation and validation (your digital VIP passes)
+The API runs on `http://localhost:5000` by default.
 
-> 🔒 **Security Note**: In a production environment, use strong, unique values for PEPPER and JWT_SECRET_KEY. The values shown here are for demonstration only!
+### User Endpoints
 
-## 🔐 Authentication
+| Method | Endpoint        | Description           | Auth Required | Admin Only |
+| ------ | --------------- | --------------------- | :-----------: | :--------: |
+| POST   | `/user/signin`  | Register a new user   |     No\*      |     No     |
+| POST   | `/user/login`   | Log in a user         |      No       |     No     |
+| DELETE | `/user/delete`  | Delete a user account |      Yes      |     No     |
+| PUT    | `/user/banuser` | Ban/unban a user      |      Yes      |    Yes     |
+| GET    | `/user/`        | Get all users         |      Yes      |    Yes     |
 
-This project uses:
+> \*Admin creation requires admin authentication
 
--   **JWT (JSON Web Tokens)** for authorization - like digital ID cards for your users
--   **Argon2id** for secure password hashing - winner of the Password Hashing Competition!
+#### POST `/user/signin` - Create a new user
 
-There are two user roles with different permissions:
+Request body:
 
--   **Admin**: Full access to all features (the all-powerful overlords)
--   **Customer**: Limited access to user-specific features (the regular folks)
-
-> 💡 **Tip**: For testing all features, login with an admin account to unlock full functionality. It's like getting the master key to the application!
-
-## 📡 API Endpoints
-
-### User Routes
-
-| Method | Endpoint        | Description         | Auth Required | Admin Only | Request Body                                                                                                                   |
-| ------ | --------------- | ------------------- | ------------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------ |
-| POST   | `/user/signin`  | Create a new user   | No            | No         | `{ "email": "user@example.com", "firstName": "John", "lastName": "Doe", "password": "securePassword123", "role": "customer" }` |
-| POST   | `/user/login`   | Login to get token  | No            | No         | `{ "email": "user@example.com", "password": "securePassword123" }`                                                             |
-| DELETE | `/user/delete`  | Delete user account | Yes           | No         | `{ "email": "user@example.com", "password": "securePassword123" }`                                                             |
-| PUT    | `/user/banuser` | Ban/unban a user    | Yes           | Yes        | `{ "email": "user@example.com", "banned": true }`                                                                              |
-| GET    | `/user/`        | Get all users       | Yes           | Yes        | None                                                                                                                           |
-
-### Product Routes
-
-| Method | Endpoint           | Description            | Auth Required | Admin Only | Request Body/Query                                                                                                                                                         |
-| ------ | ------------------ | ---------------------- | ------------- | ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| GET    | `/products/`       | Get all products       | No            | No         | None                                                                                                                                                                       |
-| GET    | `/products/filter` | Filter products        | No            | No         | Query params: `category`, `gender`, `maxprice`, `minprice`, `brand`                                                                                                        |
-| POST   | `/products/add`    | Add a new product      | Yes           | Yes        | `{ "name": "Product Name", "priceCents": 2999, "description": "Product description", "stock": 10, "gender": "mensware", "category": "casual Wear", "brand": "BrandName" }` |
-| DELETE | `/products/delete` | Delete a product       | Yes           | Yes        | `{ "_id": "productId" }`                                                                                                                                                   |
-| PUT    | `/products/update` | Update product details | Yes           | Yes        | `{ "_id": "productId", "update": { "priceCents": 3999, "stock": 15 } }`                                                                                                    |
-
-### Order Routes
-
-| Method | Endpoint           | Description         | Auth Required | Admin Only | Request Body                                                                                                                                                                                             |
-| ------ | ------------------ | ------------------- | ------------- | ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| GET    | `/order/admin/all` | Get all orders      | Yes           | Yes        | None                                                                                                                                                                                                     |
-| GET    | `/order/`          | Get user orders     | Yes           | No         | `{ "email": "user@example.com" }`                                                                                                                                                                        |
-| PUT    | `/order/update`    | Update order status | Yes           | No         | `{ "orderID": "orderId", "status": "confirmed" }`                                                                                                                                                        |
-| POST   | `/order/place`     | Place a new order   | Yes           | No         | `{ "customerEmail": "user@example.com", "shippingAddress": "123 Street, City", "paymentMethod": "card", "status": "pending", "products": [{ "productId": "productId", "priceCents": 2999, "qty": 2 }] }` |
-
-## 📊 Data Models
-
-### User Model
-
-```javascript
+```json
 {
-    email: String,          // Required, Unique - The user's digital identity
-    firstName: String,      // Required - What their friends call them
-    lastName: String,       // Required - What appears on their driver's license
-    password: String,       // Required (stored as Argon2id hash) - Super secret stuff!
-    role: String,           // "admin" or "customer" - Their level of power
-    banned: Boolean         // Default: false - The naughty list
+    "email": "user@example.com",
+    "firstName": "John",
+    "lastName": "Doe",
+    "password": "password123",
+    "role": "customer"
 }
 ```
 
-### Product Model
+> Note: To create an admin user, set `"role": "admin"` (requires admin authentication)
 
-```javascript
-{
-    name: String,           // Required - What customers will see
-    priceCents: Number,     // Required - Show me the money! (in cents)
-    description: String,    // Required - Convince people to buy it
-    stock: Number,          // Required, Default: 1 - How many you've got
-    gender: String,         // Required: "mensware" or "womensware" - Who it's for
-    category: String,       // Required: Options below - What kind of thing it is
-    brand: String           // Required - Who made it
-}
-```
-
-Valid product categories:
-
--   "casual Wear" - For Netflix and chill
--   "formal Wear" - For fancy occasions
--   "sportsware" - For getting sweaty
--   "outerwear" - For battling the elements
--   "footwear" - For your feet
--   "accessories" - For the finishing touch
-
-### Order Model
-
-```javascript
-{
-    customerEmail: String,  // Required - Who's buying
-    shippingAddress: String,// Required - Where to send it
-    paymentMethod: String,  // Required: "cod" or "card" - How they're paying
-    status: String,         // Required: Options below - Where it's at in the process
-    products: [             // Array of products in order - What they're buying
-        {
-            productId: ObjectId,  // Reference to Product - Which product
-            priceCents: Number,   // Required - How much they're paying
-            qty: Number           // Required, Default: 1 - How many they want
-        }
-    ],
-    createdAt: Date,        // Auto-generated timestamp - When they ordered
-    updatedAt: Date         // Auto-generated timestamp - When it was last updated
-}
-```
-
-Valid order statuses:
-
--   "pending" - Just placed, awaiting processing
--   "confirmed" - We've seen it and it's good to go
--   "shipped" - It's on the way!
--   "delivered" - It's there! 🎉
--   "cancelled" - Something went wrong 😢
-
-## 🧪 Testing with Postman
-
-### Authentication Setup
-
-1. **Create a user**:
-
-    - Send a POST request to `http://localhost:5000/user/signin` with appropriate user details
-    - Watch as your new digital identity springs to life!
-
-2. **Login**:
-
-    - Send a POST request to `http://localhost:5000/user/login` with email and password
-    - Save the returned token - it's your golden ticket!
-
-3. **Set Bearer Token**:
-    - In Postman, go to Authorization tab
-    - Select Type: Bearer Token
-    - Paste your token in the Token field
-    - Feel the power coursing through your veins!
-
-> ⭐ **Pro tip**: Create both admin and customer accounts to test different permission levels. Switch between them to feel the difference between mere mortals and API gods!
-
-### Example Workflow
-
-1. Login as admin (put on your admin hat)
-2. Add some awesome products to your store
-3. Create a customer account (switch to your customer disguise)
-4. Login as customer
-5. Place an order with products (shop till you drop!)
-6. Login as admin again to view all orders (back to business)
-
-## 🌟 Response Examples
-
-### Successful User Creation
+Response (201 Created):
 
 ```json
 {
@@ -207,7 +109,18 @@ Valid order statuses:
 }
 ```
 
-### Successful Login
+#### POST `/user/login` - Log in a user
+
+Request body:
+
+```json
+{
+    "email": "user@example.com",
+    "password": "password123"
+}
+```
+
+Response (200 OK):
 
 ```json
 {
@@ -223,87 +136,437 @@ Valid order statuses:
 }
 ```
 
-### Product List Response
+#### DELETE `/user/delete` - Delete a user account
+
+Request body:
+
+```json
+{
+    "email": "user@example.com",
+    "password": "password123"
+}
+```
+
+Response (200 OK):
+
+```json
+{
+    "success": true,
+    "message": "User removed successfully"
+}
+```
+
+#### PUT `/user/banuser` - Ban/unban a user (Admin only)
+
+Request body:
+
+```json
+{
+    "email": "user@example.com",
+    "banned": true
+}
+```
+
+Response (201 Created):
+
+```json
+{
+    "success": true,
+    "message": "Operation successfull"
+}
+```
+
+#### GET `/user/` - Get all users (Admin only)
+
+Response (200 OK):
+
+```json
+{
+    "success": true,
+    "users": [
+        {
+            "_id": "609d9ecb38c7d912345abcde",
+            "email": "user@example.com",
+            "firstName": "John",
+            "lastName": "Doe",
+            "role": "customer",
+            "banned": false
+        }
+        // ...more users
+    ],
+    "message": "operation successful"
+}
+```
+
+### Product Endpoints
+
+| Method | Endpoint           | Description       | Auth Required | Admin Only |
+| ------ | ------------------ | ----------------- | :-----------: | :--------: |
+| GET    | `/products/`       | Get all products  |      No       |     No     |
+| GET    | `/products/filter` | Filter products   |      No       |     No     |
+| POST   | `/products/add`    | Add a new product |      Yes      |    Yes     |
+| DELETE | `/products/delete` | Delete a product  |      Yes      |    Yes     |
+| PUT    | `/products/update` | Update a product  |      Yes      |    Yes     |
+
+#### GET `/products/` - Get all products
+
+Response (200 OK):
 
 ```json
 {
     "success": true,
     "products": [
         {
-            "_id": "60d21b4667d0d8992e610c85",
-            "name": "Cool T-Shirt",
-            "priceCents": 1999,
-            "description": "The coolest shirt you'll ever wear",
-            "stock": 42,
+            "_id": "609d9ecb38c7d912345abcdf",
+            "name": "Product Name",
+            "priceCents": 9999,
+            "description": "Product description",
+            "stock": 10,
             "gender": "mensware",
             "category": "casual Wear",
-            "brand": "CoolBrand"
+            "brand": "ExampleBrand"
         }
+        // ...more products
     ],
     "message": "operation successful"
 }
 ```
 
-## 🐛 Common Errors & Solutions
+#### GET `/products/filter` - Filter products
 
-| Error                               | Possible Cause                    | Solution                                              |
-| ----------------------------------- | --------------------------------- | ----------------------------------------------------- |
-| "Username already exists"           | Email is already registered       | Use a different email or recover the existing account |
-| "User Unauthorized"                 | Missing or invalid JWT token      | Login again to get a fresh token                      |
-| "User does not exists"              | Typo in email or user was deleted | Double-check email or create a new account            |
-| "Password not match"                | Incorrect password                | Check for typos or reset password                     |
-| "You are banned from this platform" | Account has been banned           | Contact an admin or create a new account              |
+Query parameters:
 
-## 🚀 Feature Expansion Ideas
+-   `category`: Product category
+-   `gender`: Product gender
+-   `maxprice`: Maximum price in cents
+-   `minprice`: Minimum price in cents
+-   `brand`: Product brand
 
-Want to take this project to the next level? Here are some cool features you could add:
+Example: `/products/filter?category=casual%20Wear&gender=mensware&minprice=1000&maxprice=5000&brand=ExampleBrand`
 
-1. **Password Reset Flow** - For when users inevitably forget their passwords
-2. **Image Upload** - Add product images with Cloudinary or S3
-3. **Review System** - Let customers leave reviews for products
-4. **Discount Codes** - Everyone loves a good sale!
-5. **Wishlists** - Let customers save products for later
-6. **Email Notifications** - Keep customers updated about their orders
-7. **Admin Dashboard** - Visual statistics for sales and inventory
-8. **Payment Gateway Integration** - Connect to Stripe or PayPal
+Response (200 OK):
 
-## 🛠️ Technical Stack
+```json
+{
+    "success": true,
+    "products": [
+        // Filtered products
+    ],
+    "message": "operation successful"
+}
+```
 
--   **Node.js**: JavaScript runtime (because JavaScript everywhere!)
--   **Express.js**: Web framework (lightweight and flexible)
--   **MongoDB**: NoSQL database (flexible document storage)
--   **Mongoose**: MongoDB object modeling (schemas in a schemaless world)
--   **JWT**: Authentication (secure, stateless tokens)
--   **Argon2id**: Password hashing (industry-leading security)
--   **Nodemon**: Development server (auto-reload magic)
+#### POST `/products/add` - Add a new product (Admin only)
 
-## 📚 Middleware Magic
+Request body:
 
-This project uses several custom middleware functions:
+```json
+{
+    "name": "New Product",
+    "priceCents": 4999,
+    "description": "Product description",
+    "stock": 25,
+    "gender": "mensware",
+    "category": "casual Wear",
+    "brand": "ExampleBrand"
+}
+```
 
--   **Authentication middleware**: Verifies JWT tokens and sets user context
--   **Error handling middleware**: Catches and formats errors for consistent responses
--   **Logging middleware**: Tracks API requests and responses
+Response (201 Created):
 
-## 🧠 Design Patterns Used
+```json
+{
+    "success": true,
+    "productDetails": {
+        // Product details including generated _id
+    },
+    "message": "Product saved successfully"
+}
+```
 
--   **MVC Pattern**: Routes, Controllers, and Models are separated
--   **Middleware Pattern**: Request processing pipeline
--   **Repository Pattern**: Data access is abstracted
--   **Singleton Pattern**: Database connection is managed as a singleton
+#### DELETE `/products/delete` - Delete a product (Admin only)
+
+Request body:
+
+```json
+{
+    "_id": "609d9ecb38c7d912345abcdf"
+}
+```
+
+Response (204 No Content or 200 OK):
+
+```json
+{
+    "success": true,
+    "message": "Product deleted successfully",
+    "deletionData": {
+        // Deletion details
+    }
+}
+```
+
+#### PUT `/products/update` - Update a product (Admin only)
+
+Request body:
+
+```json
+{
+    "_id": "609d9ecb38c7d912345abcdf",
+    "update": {
+        "priceCents": 3999,
+        "stock": 15
+    }
+}
+```
+
+Response (200 OK):
+
+```json
+{
+    "success": true,
+    "message": "Product updated successfully",
+    "updateStatus": {
+        // Update details
+    }
+}
+```
+
+### Order Endpoints
+
+| Method | Endpoint           | Description         | Auth Required | Admin Only |
+| ------ | ------------------ | ------------------- | :-----------: | :--------: |
+| GET    | `/order/admin/all` | Get all orders      |      Yes      |    Yes     |
+| GET    | `/order/`          | Get user's orders   |      Yes      |     No     |
+| PUT    | `/order/update`    | Update order status |      Yes      |     No     |
+| POST   | `/order/place`     | Place a new order   |      Yes      |     No     |
+
+#### GET `/order/admin/all` - Get all orders (Admin only)
+
+Response (200 OK):
+
+```json
+{
+    "success": true,
+    "message": "Product loaded successfully",
+    "orderDetails": [
+        {
+            "_id": "609d9ecb38c7d912345abcdg",
+            "customerEmail": "user@example.com",
+            "shippingAddress": "123 Example St",
+            "paymentMethod": "card",
+            "status": "pending",
+            "products": [
+                // Product details
+            ],
+            "customer": {
+                "firstName": "John",
+                "lastName": "Doe"
+            },
+            "createdAt": "2023-05-10T12:00:00.000Z",
+            "updatedAt": "2023-05-10T12:00:00.000Z"
+        }
+        // ...more orders
+    ]
+}
+```
+
+#### GET `/order/` - Get user's orders
+
+Request body:
+
+```json
+{
+    "email": "user@example.com"
+}
+```
+
+Response (200 OK):
+
+```json
+{
+    "success": true,
+    "message": "Product loaded successfully",
+    "orderDetails": [
+        // User's orders with details
+    ]
+}
+```
+
+#### PUT `/order/update` - Update order status
+
+Request body:
+
+```json
+{
+    "orderID": "609d9ecb38c7d912345abcdg",
+    "status": "confirmed"
+}
+```
+
+Response (200 OK):
+
+```json
+{
+    "success": true,
+    "message": "Operation successful",
+    "updateStatus": {
+        // Update details
+    }
+}
+```
+
+#### POST `/order/place` - Place a new order
+
+Request body:
+
+```json
+{
+    "customerEmail": "user@example.com",
+    "shippingAddress": "123 Example St, City, Country",
+    "paymentMethod": "card",
+    "status": "pending",
+    "products": [
+        {
+            "productId": "609d9ecb38c7d912345abcdf",
+            "priceCents": 4999,
+            "qty": 2
+        }
+    ]
+}
+```
+
+Response (201 Created):
+
+```json
+{
+    "success": true,
+    "message": "Operation successful",
+    "saveStatus": {
+        // Order details including generated _id
+    }
+}
+```
+
+## 🔐 Authentication
+
+The API uses JWT (JSON Web Token) for authentication. When a user logs in, they receive a token that should be included in subsequent requests.
+
+In Postman, add the token to the Authorization tab:
+
+1. Select "Bearer Token" from the Type dropdown
+2. Paste the token value in the Token field
+
+Customer and admin accounts have different permissions:
+
+-   Admin tokens provide access to all endpoints
+-   Customer tokens are limited to specific operations
+
+## 🧪 Testing with Postman
+
+1. **First, create an admin user**:
+
+    - Send a POST request to `/user/signin` with admin credentials
+    - For initial admin creation, you may need to temporarily modify your code
+
+2. **Login with admin credentials**:
+
+    - Send a POST request to `/user/login`
+    - Save the returned token
+
+3. **Set the token in Postman**:
+
+    - In the Authorization tab, select "Bearer Token"
+    - Paste your admin token
+
+4. **Test admin endpoints**:
+
+    - Create products
+    - View all users
+    - Ban/unban users
+    - View all orders
+
+5. **Create a customer account and test customer flows**:
+    - User registration
+    - Product browsing
+    - Order placement
+    - Order status checking
+
+## 📝 Data Models
+
+### User Model
+
+```javascript
+{
+  email: { type: String, required: true, unique: true },
+  firstName: { type: String, required: true },
+  lastName: { type: String, required: true },
+  password: { type: String, required: true },
+  role: { type: String, enum: ["admin", "customer"], default: "customer" },
+  banned: { type: Boolean, required: true, default: false }
+}
+```
+
+### Product Model
+
+```javascript
+{
+  name: { type: String, required: true },
+  priceCents: { type: Number, required: true },
+  description: { type: String, required: true },
+  stock: { type: Number, required: true, default: 1 },
+  gender: { type: String, enum: ["mensware", "womensware"], required: true },
+  category: {
+    type: String,
+    required: true,
+    enum: [
+      "casual Wear",
+      "formal Wear",
+      "sportsware",
+      "outerwear",
+      "footwear",
+      "accessories"
+    ]
+  },
+  brand: { type: String, required: true }
+}
+```
+
+### Order Model
+
+```javascript
+{
+  customerEmail: { type: String, required: true },
+  shippingAddress: { type: String, required: true },
+  paymentMethod: {
+    type: String,
+    required: true,
+    enum: ["cod", "card"],
+    default: "card"
+  },
+  status: {
+    type: String,
+    required: true,
+    enum: ["pending", "confirmed", "shipped", "delivered", "cancelled"],
+    default: "pending"
+  },
+  products: [
+    {
+      productId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Product",
+        required: true
+      },
+      priceCents: { type: Number, required: true },
+      qty: { type: Number, required: true, default: 1 }
+    }
+  ],
+  timestamps: true
+}
+```
 
 ---
 
-### 🎉 Congratulations!
+## 🎉 Happy Coding!
 
-You now have a fully functional backend API ready to power your next big idea! Whether you're building an e-commerce store, a social platform, or just learning the ropes of backend development, this project has you covered with all the essential features.
-
-Remember: With great API power comes great responsibility! Use your admin powers wisely. 😉
-
-Happy coding! 🚀
-
-Feel free to contribute to this project by submitting issues or pull requests. Let's make this backend even more awesome together!
-
----
-
-_"The best way to predict the future is to implement it." - Adapted from Alan Kay_
+Enjoy building with your new backend. For questions or issues, please open an issue on the GitHub repository.
