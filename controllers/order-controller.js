@@ -4,7 +4,7 @@ import Product from "../models/product-model.js";
 
 const orderController = {
     async getAllAsAdmin(req, res) {
-        if (req.user != null || req.user.role !== "admin") {
+        if (!req.user || req.user.role !== "admin") {
             res.status(403).json({
                 success: false,
                 message: "User Unauthorized",
@@ -102,7 +102,7 @@ const orderController = {
     },
 
     async updateStatus(req, res) {
-        if (req.user != null || req.user.role !== "admin") {
+        if (!req.user || req.user.role !== "admin") {
             res.status(403).json({
                 success: false,
                 message: "User Unauthorized",

@@ -52,7 +52,7 @@ const productController = {
     async addProducts(req, res) {
         console.log(req.user);
 
-        if (req.user != null || req.user.role !== "admin") {
+        if (!req.user || req.user.role !== "admin") {
             res.status(403).json({
                 success: false,
                 message: "User Unauthorized",
@@ -89,7 +89,7 @@ const productController = {
     },
 
     async deleteProduct(req, res) {
-        if (req.user != null || req.user.role !== "admin") {
+        if (!req.user || req.user.role !== "admin") {
             res.status(403).json({
                 success: false,
                 message: "User Unauthorized",
@@ -125,7 +125,7 @@ const productController = {
     },
 
     async updateProduct(req, res) {
-        if (req.user != null || req.user.role !== "admin") {
+        if (!req.user || req.user.role !== "admin") {
             res.status(403).json({
                 success: false,
                 message: "User Unauthorized",
