@@ -3,20 +3,29 @@ import Product from "../models/product-model.js";
 const productController = {
     async getAll(req, res) {
         try {
-            const products = await Product.find();
+            const page = req.body.page;
+            const limit = 10;
+            const skip = (page - 1) * limit;
+
+            const products = await Product.find().skip(skip).limit(limit);
+
+            const total = await Product.countDocuments();
+
             res.status(200).json({
                 success: true,
+                currentPage: page,
+                totalPages: Math.ceil(total / limit),
+                totalProducts: total,
                 products: products,
-                message: "operation successful",
+                message: "Operation successful",
             });
-        } catch {
-            res.status(404).json({
+        } catch (err) {
+            res.status(500).json({
                 success: false,
-                message: "Something went wrong please try again leter",
+                message: "Something went wrong. Please try again later.",
             });
         }
     },
-
     async filter(req, res) {
         const { category, gender, maxprice, minprice, brand } = req.query;
 
