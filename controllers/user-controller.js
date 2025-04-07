@@ -7,6 +7,28 @@ import { generateToken } from "../utils/token-manager.js";
 const userController = {
     async createUser(req, res) {
         const data = req.body;
+
+        if (data.role === "admin") {
+            if (req.user !== null) {
+                if (req.user.role !== "admin") {
+                    res.status(401).json({
+                        success: false,
+                        message:
+                            "This account is not authorized to create an admin",
+                    });
+
+                    return;
+                }
+            } else {
+                res.status(401).json({
+                    success: false,
+                    message: "You are not authorozed to create admin.",
+                });
+
+                return;
+            }
+        }
+
         const hashedPassword = await convertToHash(data.password);
 
         const user = new User({
